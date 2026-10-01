@@ -29,3 +29,20 @@ std::vector<std::string> tokenise(std::string_view response)
   }
   return tokenised;
 }
+
+Command populateCommand(std::vector<std::string> tokens)
+{
+  Command cmd;
+  if (tokens.size() > 0)
+  {
+    cmd.executable = tokens[0];
+  }
+  if (tokens.size() > 1)
+  {
+    for (size_t i = 1; i < tokens.size(); ++i)
+    {
+      cmd.args.push_back(tokens[i]);
+    }
+  }
+  return cmd;
+}

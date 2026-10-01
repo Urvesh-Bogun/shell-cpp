@@ -30,3 +30,12 @@ TEST(ParserTest, Tokeniser)
   ASSERT_EQ(three_words_tok[1], "hi");
   ASSERT_EQ(three_words_tok[2], "yo");
 }
+
+TEST(ParserTest, Command)
+{
+  std::string three_words{"hello hi yo"};
+  Tokens three_words_tok{tokenise(three_words)};
+  Command cmd = populateCommand(three_words_tok);
+  ASSERT_EQ(cmd.executable, "hello");
+  ASSERT_EQ(cmd.args.size(), 2);
+}
