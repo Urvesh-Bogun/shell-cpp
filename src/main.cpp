@@ -1,3 +1,4 @@
+#include "execute_builtins.hpp"
 #include "parser.hpp"
 
 #include <iostream>
@@ -12,15 +13,20 @@ int main()
     std::string response{};
     std::getline(std::cin >> std::ws, response);
     std::vector<std::string> tokenised_response;
-    if (response == "exit")
-    {
-      loop = false;
-    }
-    else
+    if (!response.empty())
     {
       tokenised_response = tokenise(response);
     }
-    Command cmd = populateCommand(tokenised_response);
+    const Command cmd = populateCommand(tokenised_response);
+
+    if (isBuiltin(cmd))
+    {
+      executeBuiltin(cmd);
+    }
+    else
+    {
+      std::cout << "Command unkown" << '\n';
+    }
   } while (loop);
 
   return 0;

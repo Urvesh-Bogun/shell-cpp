@@ -1,41 +1,88 @@
 #include "parser.hpp"
 
+#include <string>
 #include <vector>
 
 #include "gtest/gtest.h"
 
 using Tokens = std::vector<std::string>;
 
-TEST(ParserTest, Tokeniser)
+TEST(ParserTest, TokeniserNoInput)
 {
-  std::string no_words{""};
-  Tokens no_words_tok{tokenise(no_words)};
-  ASSERT_TRUE(no_words_tok.empty());
-
-  std::string one_word{"hello"};
-  Tokens one_word_tok{tokenise(one_word)};
-  ASSERT_EQ(one_word_tok.size(), 1);
-  ASSERT_EQ(one_word_tok[0], "hello");
-
-  std::string two_words{"hello hi"};
-  Tokens two_words_tok{tokenise(two_words)};
-  ASSERT_EQ(two_words_tok.size(), 2);
-  ASSERT_EQ(two_words_tok[0], "hello");
-  ASSERT_EQ(two_words_tok[1], "hi");
-
-  std::string three_words{"hello hi yo"};
-  Tokens three_words_tok{tokenise(three_words)};
-  ASSERT_EQ(three_words_tok.size(), 3);
-  ASSERT_EQ(three_words_tok[0], "hello");
-  ASSERT_EQ(three_words_tok[1], "hi");
-  ASSERT_EQ(three_words_tok[2], "yo");
+  Tokens t = tokenise("");
+  ASSERT_TRUE(t.empty());
 }
 
-TEST(ParserTest, Command)
+TEST(ParserTest, TokeniserOneWord)
 {
-  std::string three_words{"hello hi yo"};
-  Tokens three_words_tok{tokenise(three_words)};
-  Command cmd = populateCommand(three_words_tok);
-  ASSERT_EQ(cmd.executable, "hello");
+  Tokens t = tokenise("hello");
+  ASSERT_EQ(t.size(), 1u);
+  EXPECT_EQ(t[0], "hello");
+}
+
+TEST(ParserTest, TokeniserTwoWords)
+{
+  Tokens t = tokenise("hello hi");
+  ASSERT_EQ(t.size(), 2u);
+  EXPECT_EQ(t[0], "hello");
+  EXPECT_EQ(t[1], "hi");
+}
+
+TEST(ParserTest, TokeniserThreeWords)
+{
+  Tokens t = tokenise("hello hi yo");
+  ASSERT_EQ(t.size(), 3u);
+  EXPECT_EQ(t[0], "hello");
+  EXPECT_EQ(t[1], "hi");
+  EXPECT_EQ(t[2], "yo");
+}
+
+TEST(PopulateCommandTest, PopulateCommandNoInput)
+{
+  Tokens t = tokenise("");
+  Command cmd = populateCommand(t);
+  ASSERT_TRUE(cmd.executable.empty());
+  ASSERT_TRUE(cmd.args.empty());
+}
+
+TEST(PopulateCommandTest, PopulateCommandOneExNoArgs)
+{
+  Tokens t = tokenise("hello");
+  Command cmd = populateCommand(t);
+  ASSERT_FALSE(cmd.executable.empty());
+  EXPECT_EQ(cmd.executable, "hello");
+  ASSERT_TRUE(cmd.args.empty());
+}
+
+TEST(PopulateCommandTest, PopulateCommandOneArg)
+{
+  Tokens t = tokenise("hello hi");
+  Command cmd = populateCommand(t);
+  ASSERT_FALSE(cmd.executable.empty());
+  EXPECT_EQ(cmd.executable, "hello");
+  ASSERT_EQ(cmd.args.size(), 1);
+  EXPECT_EQ(cmd.args[0], "hi");
+}
+
+TEST(PopulateCommandTest, PopulateCommandTwoArgs)
+{
+  Tokens t = tokenise("hello hi yo");
+  Command cmd = populateCommand(t);
+  ASSERT_FALSE(cmd.executable.empty());
+  EXPECT_EQ(cmd.executable, "hello");
   ASSERT_EQ(cmd.args.size(), 2);
+  EXPECT_EQ(cmd.args[0], "hi");
+  EXPECT_EQ(cmd.args[1], "yo");
+}
+
+TEST(PopulateCommandTest, PopulateCommandThreeArgs)
+{
+  Tokens t = tokenise("hello hi yo yoohoo");
+  Command cmd = populateCommand(t);
+  ASSERT_FALSE(cmd.executable.empty());
+  EXPECT_EQ(cmd.executable, "hello");
+  ASSERT_EQ(cmd.args.size(), 3);
+  EXPECT_EQ(cmd.args[0], "hi");
+  EXPECT_EQ(cmd.args[1], "yo");
+  EXPECT_EQ(cmd.args[2], "yoohoo");
 }
