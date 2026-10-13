@@ -18,4 +18,6 @@
  * */
 std::vector<std::string> tokenise(std::string_view response);
 
+std::string getPathEnv(std::string_view arg2);
+
 #endif

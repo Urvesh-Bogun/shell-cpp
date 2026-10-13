@@ -1,3 +1,6 @@
+#include "execute_builtins.hpp"
+#include "parser.hpp"
+
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -57,33 +60,14 @@ void type(std::string_view arg2)
   }
   else
   {
-    const char *path = getenv("PATH");
-
-    std::string path_string = static_cast<std::string>(path);
-    std::string path_so_far;
-
-    for (size_t i{0}; i < path_string.size(); ++i)
+    std::string path = getPathEnv(arg2);
+    if (!path.empty())
     {
-      if (path_string[i] == ':')
-      {
-        std::string full_path =
-            path_so_far + "/" + static_cast<std::string>(arg2);
-
-        // Is there a binary we can execute?
-        if (access(full_path.c_str(), X_OK) == 0)
-        {
-          std::cout << "type is " << full_path << '\n';
-          return;
-        }
-        path_so_far.clear();
-      }
-      else
-      {
-        path_so_far += path_string[i];
-      }
+      std::cout << "type is " << path << '\n';
+      return;
     }
+    std::cout << arg2 << ": not found" << '\n';
   }
-  std::cout << arg2 << ": not found" << '\n';
 }
 
 void executeBuiltin(std::vector<std::string> &cmd)

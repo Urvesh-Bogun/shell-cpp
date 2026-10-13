@@ -4,6 +4,8 @@
 #include <string_view>
 #include <vector>
 
+#include <unistd.h>
+
 std::vector<std::string> tokenise(std::string_view response)
 {
   std::vector<std::string> tokenised{};
@@ -28,4 +30,33 @@ std::vector<std::string> tokenise(std::string_view response)
     tokenised.push_back(token);
   }
   return tokenised;
+}
+
+std::string getPathEnv(std::string_view arg2)
+{
+  const char *path = getenv("PATH");
+
+  std::string path_string = static_cast<std::string>(path);
+  std::string path_so_far;
+
+  for (size_t i{0}; i < path_string.size(); ++i)
+  {
+    if (path_string[i] == ':')
+    {
+      std::string full_path =
+          path_so_far + "/" + static_cast<std::string>(arg2);
+
+      // Is there a binary we can execute?
+      if (access(full_path.c_str(), X_OK) == 0)
+      {
+        return full_path;
+      }
+      path_so_far.clear();
+    }
+    else
+    {
+      path_so_far += path_string[i];
+    }
+  }
+  return "";
 }
