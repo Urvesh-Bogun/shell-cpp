@@ -1,4 +1,5 @@
 #include "execute_builtins.hpp"
+#include "execute_external.hpp"
 #include "parser.hpp"
 
 #include <cstdlib>
@@ -30,6 +31,10 @@ int main()
     if (isBuiltin(cmd[0]))
     {
       executeBuiltin(cmd);
+    }
+    else if (isExternal(cmd[0]))
+    {
+      executeExternal(cmd, getPathEnv(cmd[0]));
     }
     else
     {

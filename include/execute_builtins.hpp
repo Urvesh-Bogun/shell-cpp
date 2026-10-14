@@ -59,6 +59,8 @@ void cd(std::string arg2);
  *
  * First checks if type is a shell builtin using isBuiltin().
  *
+ * Then checks if type is an external executable using isExternal().
+ *
  * If not, gets the PATH environment variable and builds a std::string to the
  * path of the extenal executable.
  *
@@ -68,7 +70,7 @@ void type(std::string_view arg2);
 
 /*
  * @brief Performs execution of builtin.
- * @param std::vector<std::string> reference of full user input.
+ * @param std::vector<std::string> reference of full tokenised user input.
  *
  * Calls different builtin functions based on user input.
  *

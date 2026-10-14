@@ -32,7 +32,7 @@ std::vector<std::string> tokenise(std::string_view response)
   return tokenised;
 }
 
-std::string getPathEnv(std::string_view arg2)
+std::string getPathEnv(std::string_view arg)
 {
   const char *path = getenv("PATH");
 
@@ -43,8 +43,7 @@ std::string getPathEnv(std::string_view arg2)
   {
     if (path_string[i] == ':')
     {
-      std::string full_path =
-          path_so_far + "/" + static_cast<std::string>(arg2);
+      std::string full_path = path_so_far + "/" + static_cast<std::string>(arg);
 
       // Is there a binary we can execute?
       if (access(full_path.c_str(), X_OK) == 0)
