@@ -32,7 +32,7 @@ bool isExternal(std::string_view arg1)
 
 void executeExternal(std::vector<std::string> &cmd, std::string full_path)
 {
-  // Convert std::vector<std::string> &cmd to char *arr
+  // Convert std::vector<std::string> &cmd to char * vector
   std::vector<char *> argv;
   for (size_t arg{0}; arg < cmd.size(); ++arg)
   {

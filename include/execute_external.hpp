@@ -22,8 +22,14 @@ bool isExternal(std::string_view arg1);
 /*
  * @brief Performs execution of external executable.
  * @param std::vector<std::string> refrrence of full tokenised user input.
+ * @param std::string full path to binary.
  *
- * Calls different builtin functions based on user input.
+ * Creates a char * vector from the std::vector<std::string> to be used in
+ * execv().
+ *
+ * Forks process:
+ * 	Child process executes external executable using execv().
+ * 	Parent process waits for child process to finish using waitpid().
  *
  * @return void.
  *
