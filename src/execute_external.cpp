@@ -1,6 +1,7 @@
 #include "execute_external.hpp"
 #include "parser.hpp"
 
+#include <iostream>
 #include <string>
 #include <string_view>
 
@@ -42,10 +43,20 @@ void executeExternal(std::vector<std::string> &cmd, std::string full_path)
 
   pid_t pid = fork();
 
+  // Handle failed fork
+  if (pid < 0)
+  {
+    std::cerr << "fork() failed :(" << '\n';
+    std::exit(1);
+  }
+
   // Handle child process
   if (pid == 0)
   {
     execv(full_path.c_str(), argv.data());
+
+    // If child process has reached here, we have a problem
+    std::cerr << "execv() failed :(" << '\n';
   }
   // Handle parent process
   else
