@@ -9,13 +9,17 @@
 #include <sched.h>
 #include <sys/wait.h>
 #include <unistd.h>
+#include <vector>
 
 /*
  * Sources:
  *
+ * fork: https://www.geeksforgeeks.org/c/fork-system-call/
+ *
  * execv: https://www.geeksforgeeks.org/c/exec-family-of-functions-in-c/
  *
  * waitpid: https://linux.die.net/man/2/waitpid
+ *
  * */
 
 bool isExternal(std::string_view arg1)
@@ -31,15 +35,23 @@ bool isExternal(std::string_view arg1)
   }
 }
 
-void executeExternal(std::vector<std::string> &cmd, std::string full_path)
+std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd)
 {
-  // Convert std::vector<std::string> &cmd to char * vector
   std::vector<char *> argv;
+
   for (size_t arg{0}; arg < cmd.size(); ++arg)
   {
     argv.push_back(const_cast<char *>(cmd[arg].c_str()));
   }
+
   argv.push_back(nullptr);
+
+  return argv;
+}
+
+void executeExternal(std::vector<std::string> &cmd, std::string full_path)
+{
+  std::vector<char *> argv = convertToCharStarVec(cmd);
 
   pid_t pid = fork();
 
