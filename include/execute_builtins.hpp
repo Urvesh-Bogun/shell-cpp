@@ -1,5 +1,4 @@
-#ifndef EXECUTE_BUILTINS_HPP
-#define EXECUTE_BUILTINS_HPP
+#pragma once
 
 #include <string>
 #include <string_view>
@@ -78,5 +77,3 @@ void type(std::string_view arg2);
  *
  * */
 void executeBuiltin(std::vector<std::string> &cmd);
-
-#endif

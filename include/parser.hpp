@@ -1,5 +1,4 @@
-#ifndef PARSER_HPP
-#define PARSER_HPP
+#pragma once
 
 #include <string>
 #include <string_view>
@@ -19,5 +18,3 @@
 std::vector<std::string> tokenise(std::string_view response);
 
 std::string getPathEnv(std::string_view arg2);
-
-#endif
