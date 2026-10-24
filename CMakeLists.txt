@@ -8,7 +8,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 add_library(shell-cpp-core
 	src/parser.cpp
 	src/execute_builtins.cpp
-	src/execute_external.cpp
+	src/execute_externals.cpp
 )
 
 target_include_directories(shell-cpp-core PUBLIC

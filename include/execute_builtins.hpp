@@ -4,57 +4,55 @@
 #include <string_view>
 #include <vector>
 
-/*
+/**
  * @brief Checks if first arguement is a shell builtin.
- * @param std::string_view of user's first arguement.
  *
  * Iterates through predefined array of builtins and checks if the first
  * arguement of user input matches any entries in the array.
  *
- * @return bool. True if first arguement is a shell builtin.
+ * @param arg1 User's first argument.
  *
- * */
-bool isBuiltin(std::string_view agr1);
+ * @return True if first arguement is a shell builtin.
+ */
+bool isBuiltin(std::string_view arg1);
 
-/*
+/**
  * @brief Prints out user input apart from "echo" command.
- * @param std::vector<std::sting> reference to full user input.
  *
  * Iterates through rest of the string vector and prints each word.
  *
- * @return void.
+ * @param cmd Reference to full user input.
  *
- * */
+ * @return void.
+ */
 void echo(std::vector<std::string> &cmd);
 
-/*
- * @brief Prints current working directoy.
+/**
+ * @brief Prints current working directory.
  *
  * Prints char pointer holding the current working directoy using getcwd()
  *
  * cwd() uses NULL and 0 to dynamically allocate memory as we do not know the
- * length of the current directoy.
+ * length of the current directory.
  *
  * @return void.
- *
- * */
+ */
 void pwd();
 
-/*
+/**
  * @brief Changes user directoy.
- * @param std::string of directoy user wants to change into.
  *
  * Converts std::string to C string (std::string_view not used for safe
  * conversion), which is then passed into the chdir() system call.
  *
- * @return void.
+ * @param arg2 Directoy user wants to change into.
  *
- * */
+ * @return void.
+ */
 void cd(std::string arg2);
 
-/*
+/**
  * @brief Prints whether a command is a shell builtin or external executable.
- * @param std::string_view of the user's second arguement.
  *
  * First checks if type is a shell builtin using isBuiltin().
  *
@@ -63,17 +61,19 @@ void cd(std::string arg2);
  * If not, gets the PATH environment variable and builds a std::string to the
  * path of the extenal executable.
  *
+ * @param arg2 The user's second argument.
+ *
  * @return void.
- * */
+ */
 void type(std::string_view arg2);
 
-/*
+/**
  * @brief Performs execution of builtin.
- * @param std::vector<std::string> reference of full tokenised user input.
  *
  * Calls different builtin functions based on user input.
  *
- * @return void.
+ * @param cmd Reference of full tokenised user input.
  *
- * */
+ * @return void.
+ */
 void executeBuiltin(std::vector<std::string> &cmd);

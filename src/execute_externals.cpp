@@ -1,15 +1,14 @@
-#include "execute_external.hpp"
-#include "parser.hpp"
+#include "execute_externals.hpp"
 
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <vector>
 
 #include <cstddef>
 #include <sched.h>
 #include <sys/wait.h>
 #include <unistd.h>
-#include <vector>
 
 /*
  * Sources:
@@ -22,17 +21,10 @@
  *
  * */
 
-bool isExternal(std::string_view arg1)
+bool isExternal(std::string_view arg1, Resolver resolved_path)
 {
-  std::string path = getPathEnv(arg1);
-  if (!path.empty())
-  {
-    return true;
-  }
-  else
-  {
-    return false;
-  }
+  std::string path = resolved_path(arg1);
+  return (!path.empty());
 }
 
 std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd)

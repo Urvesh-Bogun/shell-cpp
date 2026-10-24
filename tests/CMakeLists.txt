@@ -11,6 +11,7 @@ FetchContent_MakeAvailable(googletest)
 add_executable(unit_test
   unit/test_parser.cpp
   unit/test_execute_builtins.cpp
+  unit/test_execute_externals.cpp
 )
 target_link_libraries(unit_test PRIVATE
   shell-cpp-core
