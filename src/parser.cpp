@@ -1,34 +1,92 @@
-#include "parser.hpp"
+#include <unistd.h>
 
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include <unistd.h>
+#include "parser.hpp"
+
+bool isOperator(std::string_view s)
+{
+  return (s == ">" || s == ">>" || s == "<" || s == "|" || s == "&");
+}
 
 std::vector<std::string> tokenise(std::string_view response)
 {
   std::vector<std::string> tokenised{};
   std::string token{};
 
-  for (size_t i{0}; i < response.size(); ++i)
+  bool double_quote = false;
+  bool single_quote = false;
+  size_t i{0};
+
+  while (i < response.size())
   {
-    if (response[i] != ' ')
+    char c = response[i];
+
+    // Double quote (not single)
+    if (c == '"' && !single_quote)
     {
-      token += response[i];
+      double_quote = !double_quote;
+      ++i;
+      continue;
     }
-    else
+
+    // Single quote (not quote)
+    if (c == '\'' && !double_quote)
     {
-      tokenised.push_back(token);
-      token = "";
+      single_quote = !single_quote;
+      ++i;
+      continue;
     }
+
+    // Space (not quote)
+    if (c == ' ' && !double_quote && !single_quote)
+    {
+      if (!token.empty())
+      {
+        tokenised.push_back(token);
+        token.clear();
+      }
+      ++i;
+      continue;
+    }
+
+    // Operators (not in double quote)
+    else if ((c == '>' || c == '<' || c == '|' || c == '&') && !double_quote &&
+             !single_quote)
+    {
+      if (!token.empty())
+      {
+        tokenised.push_back(token);
+        token.clear();
+      }
+
+      // Check next value if it is another '>'
+      if (c == '>' && i + 1 < response.size() && response[i + 1] == '>')
+      {
+        tokenised.push_back(">>");
+        i += 2;
+      }
+      else
+      {
+        tokenised.push_back(std::string(1, c));
+        ++i;
+      }
+      continue;
+    }
+
+    // Normal characters
+    token.push_back(c);
+    ++i;
   }
 
-  // Pushes back last token or if only one token was given (no space)
+  // Push back whats left
   if (!token.empty())
   {
     tokenised.push_back(token);
   }
+
   return tokenised;
 }
 

@@ -4,6 +4,23 @@
 #include <string_view>
 #include <vector>
 
+enum class Operator
+{
+  None,
+  Out,    // >
+  Append, // >>
+  In,     // <
+  Pipe,   // |
+  And     // &&
+};
+
+struct TokenisedCmd
+{
+  std::vector<std::string> args;
+  Operator op;
+  std::string filename;
+};
+
 /**
  * @breif Splits an std::string into tokens.
  * @param response Full user input.
