@@ -1,25 +1,14 @@
-#include "execute_externals.hpp"
+#include <sched.h>
+#include <sys/wait.h>
+#include <unistd.h>
 
+#include <cstddef>
 #include <iostream>
 #include <string>
 #include <string_view>
 #include <vector>
 
-#include <cstddef>
-#include <sched.h>
-#include <sys/wait.h>
-#include <unistd.h>
-
-/*
- * Sources:
- *
- * fork: https://www.geeksforgeeks.org/c/fork-system-call/
- *
- * execv: https://www.geeksforgeeks.org/c/exec-family-of-functions-in-c/
- *
- * waitpid: https://linux.die.net/man/2/waitpid
- *
- * */
+#include "execute_externals.hpp"
 
 bool isExternal(std::string_view arg1, Resolver resolved_path)
 {
@@ -27,13 +16,13 @@ bool isExternal(std::string_view arg1, Resolver resolved_path)
   return (!path.empty());
 }
 
-std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd)
+std::vector<char *> convertToCharStarVec(const std::vector<std::string> &tokens)
 {
   std::vector<char *> argv;
 
-  for (size_t arg{0}; arg < cmd.size(); ++arg)
+  for (size_t arg{0}; arg < tokens.size(); ++arg)
   {
-    argv.push_back(const_cast<char *>(cmd[arg].c_str()));
+    argv.push_back(const_cast<char *>(tokens[arg].c_str()));
   }
 
   argv.push_back(nullptr);
@@ -41,9 +30,10 @@ std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd)
   return argv;
 }
 
-void executeExternal(std::vector<std::string> &cmd, std::string full_path)
+void executeExternal(const std::vector<std::string> &tokens,
+                     const std::string &full_path)
 {
-  std::vector<char *> argv = convertToCharStarVec(cmd);
+  std::vector<char *> argv = convertToCharStarVec(tokens);
 
   pid_t pid = fork();
 

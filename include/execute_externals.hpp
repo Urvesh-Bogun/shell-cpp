@@ -1,13 +1,12 @@
 #pragma once
 
-#include "parser.hpp"
-
 #include <string>
 #include <string_view>
 #include <vector>
 
-// Alias for function pointer
-using Resolver = std::string (*)(std::string_view);
+#include "parser.hpp"
+
+using Resolver = std::string (*)(std::string_view cmd);
 
 /**
  * @brief Checks if first arguement is an external executable.
@@ -32,11 +31,12 @@ bool isExternal(std::string_view arg1, Resolver resolved_path = getPathEnv);
  * Creates a char * vector from the std::vector<std::string> to be used in
  * execv().
  *
- * @param cmd Reference of full tokenised user input.
+ * @param tokens Reference of full tokenised user input.
  *
  * @return argv The converted string vector.
  */
-std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd);
+std::vector<char *>
+convertToCharStarVec(const std::vector<std::string> &tokens);
 
 /**
  * @brief Performs execution of external executable.
@@ -48,6 +48,10 @@ std::vector<char *> convertToCharStarVec(std::vector<std::string> &cmd);
  * @param cmd Reference of full tokenised user input.
  * @param full_path Full path to binary.
  *
+ * @see https://www.geeksforgeeks.org/c/fork-system-call/
+ * @see execv:   https://www.geeksforgeeks.org/c/exec-family-of-functions-in-c/
+ * @see waitpid: https://linux.die.net/man/2/waitpid
  * @return void.
  */
-void executeExternal(std::vector<std::string> &cmd, std::string full_path);
+void executeExternal(const std::vector<std::string> &tokens,
+                     const std::string &full_path);
