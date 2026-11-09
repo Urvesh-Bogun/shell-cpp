@@ -12,6 +12,11 @@
 
 const std::vector<std::string> builtins = {"exit", "echo", "pwd", "cd", "type"};
 
+const BuiltinHashMap BUILTIN_COMMANDS = {{"echo", builtinEcho},
+                                         {"pwd", builtinPwd},
+                                         {"cd", builtinCd},
+                                         {"type", builtinType}};
+
 bool isBuiltin(std::string_view arg1)
 {
   for (size_t i = 0; i < builtins.size(); ++i)
@@ -24,7 +29,7 @@ bool isBuiltin(std::string_view arg1)
   return false;
 }
 
-void echo(std::vector<std::string> &cmd)
+int builtinEcho(const std::vector<std::string> &cmd)
 {
   for (size_t i{1}; i < cmd.size(); ++i)
   {
@@ -32,9 +37,11 @@ void echo(std::vector<std::string> &cmd)
   }
   // Add endline
   std::cout << "\n";
+
+  return 0;
 }
 
-void pwd()
+int builtinPwd(const std::vector<std::string> &cmd)
 {
   // Null and 0 as args dynamically allocate memory to the buffer for the file
   // path as needed
@@ -42,21 +49,26 @@ void pwd()
 
   std::cout << cwd << '\n';
   free(cwd);
+
+  return 0;
 }
 
-void cd(std::string arg2)
+int builtinCd(const std::vector<std::string> &cmd)
 {
+  std::string arg2 = cmd[1];
   const char *path = arg2.c_str();
   chdir(path);
+
+  return 0;
 }
 
-void type(std::string_view arg2)
+int builtinType(const std::vector<std::string> &cmd)
 {
+  std::string arg2 = cmd[1];
 
   if (isBuiltin(arg2))
   {
     std::cout << arg2 << " is a shell builtin" << '\n';
-    return;
   }
   else
   {
@@ -64,38 +76,37 @@ void type(std::string_view arg2)
     if (!path.empty())
     {
       std::cout << "type is " << path << '\n';
-      return;
     }
-    std::cout << arg2 << ": not found" << '\n';
+    else
+    {
+      std::cout << arg2 << ": not found" << '\n';
+    }
   }
+
+  return 0;
 }
 
-void executeBuiltin(std::vector<std::string> &cmd)
+int executeBuiltin(const std::vector<std::string> &cmd)
 {
+  if (cmd.empty())
+  {
+    return 0;
+  }
+
   bool b = isBuiltin(cmd[0]);
+
   if (b)
   {
-    std::string builtin = cmd[0];
-
-    if (builtin == "exit")
+    auto first = BUILTIN_COMMANDS.find(cmd[0]);
+    if (first != BUILTIN_COMMANDS.end())
     {
-      exit(EXIT_SUCCESS);
+      return first->second(cmd);
     }
-    else if (builtin == "echo")
-    {
-      echo(cmd);
-    }
-    else if (builtin == "pwd")
-    {
-      pwd();
-    }
-    else if (builtin == "cd")
-    {
-      cd(cmd[1]);
-    }
-    else if (builtin == "type")
-    {
-      type(cmd[1]);
-    }
+    return 1;
+  }
+  else
+  {
+    std::cerr << "Builtin command not found." << '\n';
+    return 1;
   }
 }

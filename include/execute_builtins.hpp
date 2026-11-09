@@ -2,7 +2,16 @@
 
 #include <string>
 #include <string_view>
+#include <unordered_map>
 #include <vector>
+
+// Alias for builtin function handler (usually takes in tokens)
+using Handler = int (*)(const std::vector<std::string> &);
+
+// Alias for HashMap to store command names and corresponding handler
+using BuiltinHashMap = std::unordered_map<std::string, Handler>;
+
+extern const BuiltinHashMap BUILTIN_COMMANDS;
 
 /**
  * @brief Checks if first arguement is a shell builtin.
@@ -23,9 +32,9 @@ bool isBuiltin(std::string_view arg1);
  *
  * @param cmd Reference to full user input.
  *
- * @return void.
+ * @return int.
  */
-void echo(std::vector<std::string> &cmd);
+int builtinEcho(const std::vector<std::string> &cmd);
 
 /**
  * @brief Prints current working directory.
@@ -35,9 +44,9 @@ void echo(std::vector<std::string> &cmd);
  * cwd() uses NULL and 0 to dynamically allocate memory as we do not know the
  * length of the current directory.
  *
- * @return void.
+ * @return int.
  */
-void pwd();
+int builtinPwd(const std::vector<std::string> &cmd);
 
 /**
  * @brief Changes user directoy.
@@ -47,9 +56,9 @@ void pwd();
  *
  * @param arg2 Directoy user wants to change into.
  *
- * @return void.
+ * @return int.
  */
-void cd(std::string arg2);
+int builtinCd(const std::vector<std::string> &cmd);
 
 /**
  * @brief Prints whether a command is a shell builtin or external executable.
@@ -63,9 +72,9 @@ void cd(std::string arg2);
  *
  * @param arg2 The user's second argument.
  *
- * @return void.
+ * @return int.
  */
-void type(std::string_view arg2);
+int builtinType(const std::vector<std::string> &cmd);
 
 /**
  * @brief Performs execution of builtin.
@@ -74,6 +83,6 @@ void type(std::string_view arg2);
  *
  * @param cmd Reference of full tokenised user input.
  *
- * @return void.
+ * @return int.
  */
-void executeBuiltin(std::vector<std::string> &cmd);
+int executeBuiltin(const std::vector<std::string> &cmd);
